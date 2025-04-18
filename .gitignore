@@ -1,0 +1,43 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+
+# build
+dev-dist
+
+# production
+/build
+/functions/build
+
+# styleguide
+styleguide/public
+storybook-static
+
+# misc
+.DS_Store
+.firebase
+.idea
+.eslintcache
+
+# Env
+.env
+.env.dev
+.env.local
+.env.*.local
+# Logs
+npm-debug.log*
+
+# VS code plugin
+android/app/.project
+.idea/*
+*.code-snippets
+capacitor.config.json
+
+# devenv
+.devenv.flake.nix
+.devenv
+.direnv
+!.envrc
+
+*storybook.log
