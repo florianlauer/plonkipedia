@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply font-sans;
+  }
+
+  body {
+    @apply bg-white text-geoguessr-black min-h-screen;
+  }
+}
+
+@layer components {
+  .container {
+    @apply px-4 mx-auto max-w-7xl sm:px-6 lg:px-8;
+  }
+
+  .btn {
+    @apply px-4 py-2 font-medium rounded-lg transition-colors;
+  }
+
+  .btn-primary {
+    @apply bg-geoguessr-green text-white hover:bg-geoguessr-dark-green;
+  }
+
+  .btn-secondary {
+    @apply bg-geoguessr-blue text-white hover:bg-geoguessr-dark-blue;
+  }
+
+  .btn-danger {
+    @apply bg-geoguessr-red text-white hover:bg-geoguessr-dark-red;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-md overflow-hidden;
+  }
+}
