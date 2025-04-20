@@ -12,9 +12,7 @@ export const getEnv = (key: string, defaultValue: string = ""): string => {
 
   // Vérification pour l'environnement Vite
   if (typeof import.meta !== "undefined") {
-    // @ts-expect-error - import.meta.env n'est pas reconnu dans le système de types
     if (import.meta.env && import.meta.env[key]) {
-      // @ts-expect-error - Accès aux propriétés dynamiques de import.meta.env
       return import.meta.env[key];
     }
   }
