@@ -35,7 +35,6 @@ export const fetchHints = async (options: {
   page?: number;
   pageSize?: number;
 }): Promise<{ hints: Hint[]; count: number }> => {
-  // Identifiant unique pour tracer cette requête
   const requestId = Math.random().toString(36).substring(2, 8);
 
   try {
@@ -48,12 +47,40 @@ export const fetchHints = async (options: {
     const pageSize = options.pageSize || 10;
     const startIdx = page * pageSize;
 
-    // Construire la requête de base
+    // Construire la requête de base avec jointure sur hint_translations si nécessaire
     let query = supabase
       .from("hints")
       .select("*, country:countries(*)", { count: "exact" });
 
-    // Appliquer les filtres
+    // Si on a un terme de recherche, on fait la jointure avec hint_translations
+    if (options.searchTerm) {
+      console.log(`[${requestId}] Searching for term:`, options.searchTerm);
+
+      // Convertir le terme de recherche en format tsquery
+      // On remplace les espaces par & pour une recherche AND
+      // et on ajoute :* à chaque mot pour la recherche partielle
+      const searchQuery = options.searchTerm
+        .trim()
+        .split(/\s+/)
+        .map((term) => `${term}:*`)
+        .join(" & ");
+
+      const hintIds = await supabase
+        .from("hint_translations")
+        .select("hint_id")
+        .textSearch("tsvector_fulltext", searchQuery, {
+          type: "plain",
+          config: "french",
+        })
+        .then(({ data }) => data?.map((row) => row.hint_id) || []);
+
+      query = supabase
+        .from("hints")
+        .select("*, country:countries(*)", { count: "exact" })
+        .in("id", hintIds);
+    }
+
+    // Appliquer les autres filtres
     if (options.countryId) {
       console.log(`[${requestId}] Filtering by country_id:`, options.countryId);
       query = query.eq("country_id", options.countryId);
@@ -62,11 +89,6 @@ export const fetchHints = async (options: {
     if (options.tags && options.tags.length > 0) {
       console.log(`[${requestId}] Filtering by tags:`, options.tags);
       query = query.overlaps("tags", options.tags);
-    }
-
-    if (options.searchTerm) {
-      console.log(`[${requestId}] Searching for term:`, options.searchTerm);
-      query = query.textSearch("fulltext", options.searchTerm);
     }
 
     // Appliquer la pagination
@@ -91,7 +113,6 @@ export const fetchHints = async (options: {
       } hints, total count: ${count || 0}`
     );
 
-    // Ajouter un petit délai pour éviter les requêtes trop rapides et les boucles
     await delay(100);
 
     return {
