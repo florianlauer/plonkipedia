@@ -38,7 +38,12 @@ const Navbar = () => {
     <header className="bg-white border-b border-purple-10 sticky top-0 z-10">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
-          <span className="text-2xl text-purple-100 italic font-extrablack">
+          <img
+            src="/src/assets/logo_pin.png"
+            alt="Plonkipedia"
+            className="w-7 h-7"
+          />
+          <span className="text-2xl text-red-logo italic font-extrablack">
             {t.title[language]}
           </span>
         </Link>

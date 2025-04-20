@@ -34,7 +34,7 @@ module.exports = {
         "turquoise-80": "#1F9C7D",
         "blue-50": "#00A2FE",
         "red-50": "#E94560",
-
+        "red-logo": "#CC302E",
         // Anciennes couleurs pour compatibilité
         "geoguessr-green": "#97E851",
         "geoguessr-dark-green": "#6CB928",

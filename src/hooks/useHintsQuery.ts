@@ -7,16 +7,28 @@ type Filters = {
   searchTerm?: string;
   page?: number;
   pageSize?: number;
+  continent?: string[];
 };
 
 export type { Filters as HintFilters };
 
 export const useHintsQuery = (filters: Filters) => {
-  const { page = 0, pageSize = 12, countryId, tags, searchTerm } = filters;
+  const {
+    page = 0,
+    pageSize = 12,
+    countryId,
+    tags,
+    searchTerm,
+    continent,
+  } = filters;
 
   return useQuery({
-    queryKey: ["hints", { page, pageSize, countryId, tags, searchTerm }],
-    queryFn: () => fetchHints({ page, pageSize, countryId, tags, searchTerm }),
+    queryKey: [
+      "hints",
+      { page, pageSize, countryId, tags, searchTerm, continent },
+    ],
+    queryFn: () =>
+      fetchHints({ page, pageSize, countryId, tags, searchTerm, continent }),
     placeholderData: (previousData) => previousData, // Keep previous data while fetching new data
   });
 };

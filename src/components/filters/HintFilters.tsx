@@ -26,9 +26,17 @@ const translations = {
     en: "Country",
     fr: "Pays",
   },
+  continent: {
+    en: "Continent",
+    fr: "Continent",
+  },
   allCountries: {
     en: "All Countries",
     fr: "Tous les pays",
+  },
+  allContinents: {
+    en: "All Continents",
+    fr: "Tous les continents",
   },
   tags: {
     en: "Tags",
@@ -44,11 +52,43 @@ const translations = {
   },
 };
 
+const continents = {
+  "North America": {
+    en: "North America",
+    fr: "Amérique du Nord",
+  },
+  "South America": {
+    en: "South America",
+    fr: "Amérique du Sud",
+  },
+  Europe: {
+    en: "Europe",
+    fr: "Europe",
+  },
+  Asia: {
+    en: "Asia",
+    fr: "Asie",
+  },
+  Africa: {
+    en: "Africa",
+    fr: "Afrique",
+  },
+  Oceania: {
+    en: "Oceania",
+    fr: "Océanie",
+  },
+  Antarctica: {
+    en: "Antarctica",
+    fr: "Antarctique",
+  },
+};
+
 type HintFiltersProps = {
   onFilterChange: (filters: {
     searchTerm?: string;
     countryId?: number;
     tags?: string[];
+    continent?: string[];
   }) => void;
   className?: string;
 };
@@ -63,6 +103,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
     number | undefined
   >(undefined);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedContinents, setSelectedContinents] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState<boolean>(false);
 
   const t = translations;
@@ -74,17 +115,34 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
         searchTerm: searchTerm || undefined,
         countryId: selectedCountryId,
         tags: selectedTags.length > 0 ? selectedTags : undefined,
+        continent:
+          selectedContinents.length > 0 ? selectedContinents : undefined,
       });
     }, 300);
 
     return () => clearTimeout(debouncedFilterChange);
-  }, [searchTerm, selectedCountryId, selectedTags, onFilterChange]);
+  }, [
+    searchTerm,
+    selectedCountryId,
+    selectedTags,
+    selectedContinents,
+    onFilterChange,
+  ]);
 
   const handleResetFilters = () => {
     setSearchTerm("");
     setSelectedCountryId(undefined);
     setSelectedTags([]);
+    setSelectedContinents([]);
     setShowFilters(false);
+  };
+
+  const handleContinentToggle = (continent: string) => {
+    setSelectedContinents((prev) =>
+      prev.includes(continent)
+        ? prev.filter((c) => c !== continent)
+        : [...prev, continent]
+    );
   };
 
   const handleTagToggle = (tag: string) => {
@@ -124,7 +182,9 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
             <span>{t.filters[language]}</span>
           </Button>
 
-          {(selectedCountryId || selectedTags.length > 0) && (
+          {(selectedCountryId ||
+            selectedTags.length > 0 ||
+            selectedContinents.length > 0) && (
             <Button variant="ghost" size="sm" onClick={handleResetFilters}>
               {t.reset[language]}
             </Button>
@@ -155,9 +215,32 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
         {/* Expanded filters */}
         {showFilters && (
           <div className="space-y-4 pt-4 border-t border-purple-10/50">
+            {/* Continent filter */}
+            <div>
+              <label className="block text-lg font-extrabold italic text-red-logo mb-1">
+                {t.continent[language]}
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(continents).map(([key, value]) => (
+                  <button
+                    key={key}
+                    onClick={() => handleContinentToggle(key)}
+                    className={`px-3 py-1.5 rounded-full text-sm italic font-extrabold transition-colors ${
+                      selectedContinents.includes(key)
+                        ? "bg-purple-50 text-white"
+                        : "bg-purple-10 text-purple-100/80 hover:bg-purple-10/70"
+                    }`}
+                  >
+                    {/* uppercase continent name */}
+                    {value[language].toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Country filter */}
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-lg font-extrabold italic text-red-logo mb-1">
                 {t.country[language]}
               </label>
               <select
@@ -180,7 +263,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
 
             {/* Tag filters */}
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-lg font-extrabold italic text-red-logo mb-1">
                 {t.tags[language]}
               </label>
               <div className="max-h-48 overflow-y-auto p-2 border border-purple-10 rounded-lg">

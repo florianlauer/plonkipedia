@@ -7,6 +7,76 @@ import { delay } from "../utils/env";
 // Forcer l'utilisation des mocks pour le moment
 const SHOULD_USE_MOCKS = false; // Forcer à true au lieu de useMocks
 
+// Mapping des continents français vers anglais
+const CONTINENT_TRANSLATIONS: Record<string, string> = {
+  europe: "Europe",
+  asie: "Asia",
+  afrique: "Africa",
+  "amérique du nord": "North America",
+  "amerique du nord": "North America",
+  "amérique du sud": "South America",
+  "amerique du sud": "South America",
+  "north america": "North America",
+  "south america": "South America",
+  océanie: "Oceania",
+  oceanie: "Oceania",
+  antarctique: "Antarctica",
+};
+
+// Fonction utilitaire pour normaliser le texte (enlever les accents, mettre en minuscule)
+const normalizeText = (text: string): string => {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+};
+
+// Fonction pour trouver les continents dans le texte
+const findContinents = (
+  searchText: string
+): { continents: string[]; remainingText: string } => {
+  const normalizedText = normalizeText(searchText);
+  const continents: string[] = [];
+  let remainingText = searchText;
+
+  // Chercher d'abord les continents composés
+  const composedContinents = [
+    "amérique du nord",
+    "amerique du nord",
+    "north america",
+    "amérique du sud",
+    "amerique du sud",
+    "south america",
+  ];
+
+  for (const continent of composedContinents) {
+    if (normalizedText.includes(normalizeText(continent))) {
+      continents.push(CONTINENT_TRANSLATIONS[normalizeText(continent)]);
+      remainingText = remainingText.replace(new RegExp(continent, "gi"), "");
+    }
+  }
+
+  // Chercher ensuite les continents simples
+  const singleWordContinents = [
+    "europe",
+    "asia",
+    "africa",
+    "oceania",
+    "antarctica",
+  ];
+  for (const continent of singleWordContinents) {
+    if (normalizedText.includes(continent)) {
+      continents.push(CONTINENT_TRANSLATIONS[continent]);
+      remainingText = remainingText.replace(new RegExp(continent, "gi"), "");
+    }
+  }
+
+  return {
+    continents,
+    remainingText: remainingText.trim(),
+  };
+};
+
 // Récupérer tous les pays
 export const fetchCountries = async (): Promise<Country[]> => {
   try {
@@ -34,6 +104,7 @@ export const fetchHints = async (options: {
   searchTerm?: string;
   page?: number;
   pageSize?: number;
+  continent?: string[];
 }): Promise<{ hints: Hint[]; count: number }> => {
   const requestId = Math.random().toString(36).substring(2, 8);
 
@@ -47,37 +118,81 @@ export const fetchHints = async (options: {
     const pageSize = options.pageSize || 10;
     const startIdx = page * pageSize;
 
-    // Construire la requête de base avec jointure sur hint_translations si nécessaire
+    // Construire la requête de base avec une jointure sur countries
     let query = supabase
       .from("hints")
-      .select("*, country:countries(*)", { count: "exact" });
+      .select("*, country:countries!inner(*)", { count: "exact" });
 
-    // Si on a un terme de recherche, on fait la jointure avec hint_translations
+    // Appliquer le filtre de continent si présent
+    if (options.continent && options.continent.length > 0) {
+      console.log(`[${requestId}] Filtering by continents:`, options.continent);
+      query = query.in("countries.continent", options.continent);
+    }
+
     if (options.searchTerm) {
       console.log(`[${requestId}] Searching for term:`, options.searchTerm);
 
-      // Convertir le terme de recherche en format tsquery
-      // On remplace les espaces par & pour une recherche AND
-      // et on ajoute :* à chaque mot pour la recherche partielle
-      const searchQuery = options.searchTerm
-        .trim()
-        .split(/\s+/)
-        .map((term) => `${term}:*`)
-        .join(" & ");
+      // Trouver les continents et le texte restant
+      const { continents, remainingText } = findContinents(options.searchTerm);
+      console.log(`[${requestId}] Found continents:`, continents);
+      console.log(`[${requestId}] Remaining text:`, remainingText);
 
-      const hintIds = await supabase
-        .from("hint_translations")
-        .select("hint_id")
-        .textSearch("tsvector_fulltext", searchQuery, {
-          type: "plain",
-          config: "french",
-        })
-        .then(({ data }) => data?.map((row) => row.hint_id) || []);
+      let hintIds: number[] = [];
 
-      query = supabase
-        .from("hints")
-        .select("*, country:countries(*)", { count: "exact" })
-        .in("id", hintIds);
+      // Si nous avons des continents, faire une première recherche
+      if (continents.length > 0) {
+        const continentQuery = continents
+          .map((term) => `${term}:*`)
+          .join(" & ");
+        console.log(`[${requestId}] Continent search query:`, continentQuery);
+
+        const continentResults = await supabase
+          .from("hint_translations")
+          .select("hint_id")
+          .textSearch("tsvector_fulltext", continentQuery, {
+            type: "plain",
+            config: "english",
+          });
+
+        if (continentResults.data) {
+          hintIds = continentResults.data.map((row) => row.hint_id);
+        }
+      }
+
+      // Si nous avons du texte restant, faire une seconde recherche
+      if (remainingText) {
+        const otherTerms = remainingText
+          .split(/\s+/)
+          .filter((term) => term.length > 0);
+        if (otherTerms.length > 0) {
+          const otherQuery = otherTerms.map((term) => `${term}:*`).join(" & ");
+          console.log(`[${requestId}] Text search query:`, otherQuery);
+
+          const textResults = await supabase
+            .from("hint_translations")
+            .select("hint_id")
+            .textSearch("tsvector_fulltext", otherQuery, {
+              type: "plain",
+              config: "french",
+            });
+
+          if (textResults.data) {
+            if (hintIds.length > 0) {
+              // Intersection des résultats
+              const textIds = textResults.data.map((row) => row.hint_id);
+              hintIds = hintIds.filter((id) => textIds.includes(id));
+            } else {
+              hintIds = textResults.data.map((row) => row.hint_id);
+            }
+          }
+        }
+      }
+
+      if (hintIds.length > 0) {
+        query = query.in("id", hintIds);
+      } else {
+        return { hints: [], count: 0 };
+      }
     }
 
     // Appliquer les autres filtres
