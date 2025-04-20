@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Button from "../ui/Button";
 import { useLanguageContext } from "../../context/LanguageContext";
 import { Link } from "react-router-dom";
+import logo from "../../assets/logo_pin.png";
 
 const translations = {
   title: {
@@ -38,11 +39,7 @@ const Navbar = () => {
     <header className="bg-white border-b border-purple-10 sticky top-0 z-10">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
-          <img
-            src="/src/assets/logo_pin.png"
-            alt="Plonkipedia"
-            className="w-7 h-7"
-          />
+          <img src={logo} alt="Plonkipedia" className="w-7 h-7" />
           <span className="text-2xl text-red-logo italic font-extrablack">
             {t.title[language]}
           </span>
