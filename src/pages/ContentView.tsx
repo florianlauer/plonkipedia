@@ -1,11 +1,12 @@
 import { AlertTriangle, Info } from "lucide-react";
 import HintCard from "../components/hint/HintCard";
-import HintFilters from "../components/filters/HintFilters";
-import useHints from "../hooks/useHints";
+import HintFiltersComponent from "../components/filters/HintFilters";
+import { useHintsQuery } from "../hooks/useHintsQuery";
+import type { HintFilters } from "../hooks/useHintsQuery";
 import { useLanguageContext } from "../context/LanguageContext";
 import Pagination from "../components/ui/Pagination";
 import PageSizeSelector from "../components/ui/PageSizeSelector";
-import { memo, useMemo, useCallback } from "react";
+import { memo, useMemo, useCallback, useState } from "react";
 import type { Hint } from "../types/database";
 
 const translations = {
@@ -57,29 +58,43 @@ HintGrid.displayName = "HintGrid";
 
 const ContentView = () => {
   const { language } = useLanguageContext();
-  const { hints, isLoading, error, updateFilters, pagination } = useHints();
-  const {
-    currentPage,
-    pageSize,
-    totalCount,
-    totalPages,
-    changePage,
-    changePageSize,
-  } = pagination;
+  const [filters, setFilters] = useState<HintFilters>({
+    page: 0,
+    pageSize: 12,
+  });
+
+  const { data, isLoading, error, isError } = useHintsQuery(filters);
+
+  const hints = data?.hints ?? [];
+  const totalCount = data?.count ?? 0;
+  const totalPages = Math.ceil(totalCount / (filters.pageSize ?? 12));
 
   // Memoïser les traductions pour éviter les re-rendus inutiles
   const t = useMemo(() => translations, []);
 
-  const handleFilterChange = useCallback(
-    (filters: { searchTerm?: string; countryId?: number; tags?: string[] }) => {
-      updateFilters(filters);
-    },
-    [updateFilters]
-  );
+  const handleFilterChange = useCallback((newFilters: Partial<HintFilters>) => {
+    setFilters((prev: HintFilters) => ({
+      ...prev,
+      ...newFilters,
+      page: 0, // Reset to first page when filters change
+    }));
+  }, []);
+
+  const handlePageChange = useCallback((page: number) => {
+    setFilters((prev: HintFilters) => ({ ...prev, page }));
+  }, []);
+
+  const handlePageSizeChange = useCallback((pageSize: number) => {
+    setFilters((prev: HintFilters) => ({ ...prev, pageSize, page: 0 }));
+  }, []);
 
   // Calculer les informations sur les résultats actuels
-  const startItem = totalCount === 0 ? 0 : currentPage * pageSize + 1;
-  const endItem = Math.min(startItem + pageSize - 1, totalCount);
+  const startItem =
+    totalCount === 0 ? 0 : (filters.page ?? 0) * (filters.pageSize ?? 12) + 1;
+  const endItem = Math.min(
+    startItem + (filters.pageSize ?? 12) - 1,
+    totalCount
+  );
 
   // Formater le texte des résultats
   const resultsText = useMemo(() => {
@@ -99,7 +114,10 @@ const ContentView = () => {
           <p className="text-purple-100/70">{t.subtitle[language]}</p>
         </div>
 
-        <HintFilters onFilterChange={handleFilterChange} className="mb-8" />
+        <HintFiltersComponent
+          onFilterChange={handleFilterChange}
+          className="mb-8"
+        />
 
         {isLoading ? (
           <div className="text-center py-12">
@@ -107,12 +125,12 @@ const ContentView = () => {
               {t.loading[language]}
             </div>
           </div>
-        ) : error ? (
+        ) : isError ? (
           <div className="text-center py-12">
             <div className="flex flex-col items-center text-red-50">
               <AlertTriangle className="h-12 w-12 mb-4" />
               <p>{t.error[language]}</p>
-              <p className="text-sm mt-2">{error}</p>
+              <p className="text-sm mt-2">{error?.message}</p>
             </div>
           </div>
         ) : hints.length === 0 ? (
@@ -131,8 +149,8 @@ const ContentView = () => {
                 {resultsText}
               </div>
               <PageSizeSelector
-                pageSize={pageSize}
-                onPageSizeChange={changePageSize}
+                pageSize={filters.pageSize ?? 12}
+                onPageSizeChange={handlePageSizeChange}
               />
             </div>
 
@@ -141,9 +159,9 @@ const ContentView = () => {
 
             {/* Pagination en bas */}
             <Pagination
-              currentPage={currentPage}
+              currentPage={filters.page ?? 0}
               totalPages={totalPages}
-              onPageChange={changePage}
+              onPageChange={handlePageChange}
               className="mt-8"
             />
           </>

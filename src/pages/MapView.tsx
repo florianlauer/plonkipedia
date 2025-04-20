@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLanguageContext } from "../context/LanguageContext";
-import useCountries from "../hooks/useCountries";
-import { Country } from "../types/database";
+import { useCountriesQuery } from "../hooks/useCountriesQuery";
+import type { Country } from "../types/database";
 
 const translations = {
   title: {
@@ -31,7 +31,12 @@ const MAP_PLACEHOLDER =
 
 const MapView = () => {
   const { language } = useLanguageContext();
-  const { countries, isLoading, error } = useCountries();
+  const {
+    data: countries = [],
+    isLoading,
+    error: isError,
+    error,
+  } = useCountriesQuery();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
 
@@ -72,9 +77,10 @@ const MapView = () => {
                   {t.loading[language]}
                 </div>
               </div>
-            ) : error ? (
+            ) : isError ? (
               <div className="text-center text-red-50 p-4">
-                {t.error[language]}
+                <p>{t.error[language]}</p>
+                <p className="text-sm mt-2">{error?.message}</p>
               </div>
             ) : (
               <ul className="space-y-1">

@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { Search, Filter, X } from "lucide-react";
 import Button from "../ui/Button";
 import { useLanguageContext } from "../../context/LanguageContext";
-import useCountries from "../../hooks/useCountries";
-import useTags from "../../hooks/useTags";
+import { useCountriesQuery } from "../../hooks/useCountriesQuery";
+import { useTagsQuery } from "../../hooks/useTagsQuery";
 
 const translations = {
   search: {
@@ -55,8 +55,8 @@ type HintFiltersProps = {
 
 const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
   const { language } = useLanguageContext();
-  const { countries } = useCountries();
-  const { tags: allTags } = useTags();
+  const { data: countries = [] } = useCountriesQuery();
+  const { data: allTags = [] } = useTagsQuery();
 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCountryId, setSelectedCountryId] = useState<

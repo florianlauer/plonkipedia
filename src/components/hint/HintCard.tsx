@@ -1,7 +1,8 @@
 import { ExternalLink, MapPin, Tag } from "lucide-react";
 import { Hint } from "../../types/database";
 import { useLanguageContext } from "../../context/LanguageContext";
-import { useTranslations } from "../../hooks/useTranslations";
+import { useTranslationQuery } from "../../hooks/useTranslationQuery";
+
 import { memo, useMemo } from "react";
 
 const translations = {
@@ -32,7 +33,10 @@ type HintCardProps = {
 const HintCard = memo(
   ({ hint, className = "" }: HintCardProps) => {
     const { language } = useLanguageContext();
-    const { translation, isLoading } = useTranslations(hint.id, language);
+    const { data: translation, isLoading } = useTranslationQuery(
+      hint.id,
+      language
+    );
 
     // Memoïser les traductions pour éviter les re-rendus inutiles
     const t = useMemo(() => translations, []);
