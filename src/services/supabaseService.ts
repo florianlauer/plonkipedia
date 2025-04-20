@@ -5,7 +5,7 @@ import { delay } from "../utils/env";
 
 // Variable pour contrôler l'utilisation des mocks
 // Forcer l'utilisation des mocks pour le moment
-const SHOULD_USE_MOCKS = true; // Forcer à true au lieu de useMocks
+const SHOULD_USE_MOCKS = false; // Forcer à true au lieu de useMocks
 
 // Récupérer tous les pays
 export const fetchCountries = async (): Promise<Country[]> => {

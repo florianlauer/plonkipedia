@@ -52,7 +52,7 @@ const HintCard = memo(
             className="w-full h-48 object-cover"
           />
           {hint.country && (
-            <div className="absolute bottom-2 left-2 bg-geoguessr-black/70 text-white px-2 py-1 rounded-lg">
+            <div className="absolute bottom-2 left-2 bg-black/80 text-white px-2 py-1 rounded-lg">
               <div className="flex items-center space-x-1">
                 <MapPin className="h-4 w-4" />
                 <span>{hint.country.name}</span>
@@ -64,7 +64,7 @@ const HintCard = memo(
               href={hint.image_link}
               target="_blank"
               rel="noopener noreferrer"
-              className="absolute bottom-2 right-2 bg-geoguessr-blue/70 text-white p-1.5 rounded-lg hover:bg-geoguessr-blue/90 transition-colors"
+              className="absolute bottom-2 right-2 bg-blue-50/80 text-white p-1.5 rounded-lg hover:bg-blue-50 transition-colors"
               title={t.viewOnMap[language]}
             >
               <ExternalLink className="h-4 w-4" />
@@ -74,31 +74,31 @@ const HintCard = memo(
 
         <div className="p-4">
           {isLoading ? (
-            <div className="h-6 w-3/4 bg-gray-200 animate-pulse rounded mb-2"></div>
+            <div className="h-6 w-3/4 bg-purple-10 animate-pulse rounded mb-2"></div>
           ) : translation?.short_text ? (
             <p className="text-lg mb-2">{translation.short_text}</p>
           ) : (
-            <p className="text-sm text-geoguessr-black/50 italic mb-2">
+            <p className="text-sm text-purple-100/50 italic mb-2">
               {t.noTranslation[language]}
             </p>
           )}
 
           {!isLoading && translation?.long_text && (
-            <p className="text-sm text-geoguessr-black/80 mb-4">
+            <p className="text-sm text-purple-100/80 mb-4">
               {translation.long_text}
             </p>
           )}
 
           {hint.tags && hint.tags.length > 0 && (
             <div className="mt-2">
-              <p className="text-xs text-geoguessr-black/60 mb-1">
+              <p className="text-xs text-purple-100/60 mb-1">
                 {t.tags[language]}:
               </p>
               <div className="flex flex-wrap gap-1">
                 {hint.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center bg-geoguessr-grey text-geoguessr-black/70 px-2 py-0.5 rounded-full text-xs"
+                    className="inline-flex items-center bg-purple-10 text-purple-100/80 px-2 py-0.5 rounded-full text-xs"
                   >
                     <Tag className="h-3 w-3 mr-1" />
                     {tag}
@@ -110,14 +110,14 @@ const HintCard = memo(
 
           {hint.locations && hint.locations.length > 0 && (
             <div className="mt-2">
-              <p className="text-xs text-geoguessr-black/60 mb-1">
+              <p className="text-xs text-purple-100/60 mb-1">
                 {t.locations[language]}:
               </p>
               <div className="flex flex-wrap gap-1">
                 {hint.locations.map((location, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center bg-geoguessr-purple/20 text-geoguessr-black/70 px-2 py-0.5 rounded-full text-xs"
+                    className="inline-flex items-center bg-purple-50/20 text-purple-100/80 px-2 py-0.5 rounded-full text-xs"
                   >
                     <MapPin className="h-3 w-3 mr-1" />
                     {location}

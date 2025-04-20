@@ -101,14 +101,14 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
         {/* Search input */}
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-geoguessr-black/40" />
+            <Search className="h-5 w-5 text-purple-100/40" />
           </div>
           <input
             type="text"
             placeholder={t.search[language]}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-2 w-full border border-geoguessr-grey rounded-lg focus:ring-2 focus:ring-geoguessr-blue focus:border-geoguessr-blue"
+            className="pl-10 pr-4 py-2 w-full border border-purple-10 rounded-lg focus:ring-2 focus:ring-purple-50 focus:border-purple-50"
           />
         </div>
 
@@ -137,12 +137,12 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
             {selectedTags.map((tag) => (
               <div
                 key={tag}
-                className="inline-flex items-center bg-geoguessr-blue/10 text-geoguessr-blue px-2 py-1 rounded-md text-sm"
+                className="inline-flex items-center bg-purple-50/10 text-purple-80 px-2 py-1 rounded-md text-sm"
               >
                 <span>{tag}</span>
                 <button
                   onClick={() => handleTagToggle(tag)}
-                  className="ml-1 text-geoguessr-blue/60 hover:text-geoguessr-blue"
+                  className="ml-1 text-purple-50/60 hover:text-purple-50"
                   title={t.clearTag[language]}
                 >
                   <X className="h-3 w-3" />
@@ -154,7 +154,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
 
         {/* Expanded filters */}
         {showFilters && (
-          <div className="space-y-4 pt-4 border-t border-geoguessr-grey/50">
+          <div className="space-y-4 pt-4 border-t border-purple-10/50">
             {/* Country filter */}
             <div>
               <label className="block text-sm font-medium mb-1">
@@ -167,7 +167,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
                     e.target.value ? Number(e.target.value) : undefined
                   )
                 }
-                className="w-full border border-geoguessr-grey rounded-lg p-2 focus:ring-2 focus:ring-geoguessr-blue focus:border-geoguessr-blue"
+                className="w-full border border-purple-10 rounded-lg p-2 focus:ring-2 focus:ring-purple-50 focus:border-purple-50"
               >
                 <option value="">{t.allCountries[language]}</option>
                 {countries.map((country) => (
@@ -183,7 +183,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
               <label className="block text-sm font-medium mb-1">
                 {t.tags[language]}
               </label>
-              <div className="max-h-48 overflow-y-auto p-2 border border-geoguessr-grey rounded-lg">
+              <div className="max-h-48 overflow-y-auto p-2 border border-purple-10 rounded-lg">
                 <div className="flex flex-wrap gap-2">
                   {allTags.map((tag) => (
                     <button
@@ -191,8 +191,8 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
                       onClick={() => handleTagToggle(tag)}
                       className={`px-2 py-1 rounded-md text-sm transition-colors ${
                         selectedTags.includes(tag)
-                          ? "bg-geoguessr-blue text-white"
-                          : "bg-geoguessr-grey hover:bg-geoguessr-grey/70"
+                          ? "bg-purple-50 text-white"
+                          : "bg-purple-10 hover:bg-purple-10/70"
                       }`}
                     >
                       {tag}

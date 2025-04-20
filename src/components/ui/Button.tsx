@@ -19,15 +19,15 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
           "disabled:opacity-50 disabled:pointer-events-none",
           {
-            "bg-geoguessr-green text-white hover:bg-geoguessr-dark-green focus-visible:ring-geoguessr-green":
+            "bg-green-50 text-black hover:bg-green-80 focus-visible:ring-green-50":
               variant === "primary",
-            "bg-geoguessr-blue text-white hover:bg-geoguessr-dark-blue focus-visible:ring-geoguessr-blue":
+            "bg-blue-50 text-white hover:bg-purple-80 focus-visible:ring-blue-50":
               variant === "secondary",
-            "border border-geoguessr-grey bg-transparent hover:bg-geoguessr-grey/20 focus-visible:ring-geoguessr-grey":
+            "border border-purple-10 bg-transparent hover:bg-purple-10/20 focus-visible:ring-purple-10":
               variant === "outline",
-            "bg-transparent hover:bg-geoguessr-grey/20 focus-visible:ring-geoguessr-grey":
+            "bg-transparent hover:bg-purple-10/20 focus-visible:ring-purple-10":
               variant === "ghost",
-            "bg-geoguessr-red text-white hover:bg-geoguessr-dark-red focus-visible:ring-geoguessr-red":
+            "bg-red-50 text-white hover:bg-red-50/80 focus-visible:ring-red-50":
               variant === "danger",
             "px-3 py-1.5 text-sm": size === "sm",
             "px-4 py-2.5": size === "md",

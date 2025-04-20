@@ -26,13 +26,13 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
 
   return (
     <div className={`flex items-center text-sm ${className}`}>
-      <span className="mr-2 text-geoguessr-black/60">
+      <span className="mr-2 text-purple-100/70">
         {t.itemsPerPage[language]}
       </span>
       <select
         value={pageSize}
         onChange={(e) => onPageSizeChange(Number(e.target.value))}
-        className="py-1 px-2 border rounded-md bg-white border-geoguessr-grey focus:outline-none focus:ring-1 focus:ring-geoguessr-blue"
+        className="py-1 px-2 border rounded-md bg-white border-purple-10 focus:outline-none focus:ring-1 focus:ring-purple-50"
       >
         {options.map((size) => (
           <option key={size} value={size}>

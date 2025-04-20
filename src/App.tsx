@@ -13,7 +13,7 @@ const App = () => {
   return (
     <LanguageProvider>
       <Router>
-        <div className="min-h-screen flex flex-col bg-geoguessr-grey/20">
+        <div className="min-h-screen flex flex-col bg-purple-10/30">
           <Navbar />
           <main className="flex-grow">
             <Routes>
@@ -23,8 +23,8 @@ const App = () => {
               <Route path="*" element={<Navigate to="/content" replace />} />
             </Routes>
           </main>
-          <footer className="bg-white py-4 border-t border-geoguessr-grey">
-            <div className="container mx-auto text-center text-sm text-geoguessr-black/60">
+          <footer className="bg-white py-4 border-t border-purple-10">
+            <div className="container mx-auto text-center text-sm text-purple-100/70">
               Plonkipedia - GeoGuessr Learning Tool
             </div>
           </footer>

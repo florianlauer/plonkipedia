@@ -73,7 +73,7 @@ const Pagination = ({
         className={`p-2 rounded-md ${
           currentPage === 0
             ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-geoguessr-grey/20"
+            : "hover:bg-purple-10/30"
         }`}
         aria-label="Previous page"
       >
@@ -97,8 +97,8 @@ const Pagination = ({
             onClick={() => onPageChange(pageNumber)}
             className={`px-3 py-1 rounded-md ${
               currentPage === pageNumber
-                ? "bg-geoguessr-blue text-white"
-                : "hover:bg-geoguessr-grey/20"
+                ? "bg-purple-50 text-white"
+                : "hover:bg-purple-10/30"
             }`}
             aria-current={currentPage === pageNumber ? "page" : undefined}
           >
@@ -114,7 +114,7 @@ const Pagination = ({
         className={`p-2 rounded-md ${
           currentPage === totalPages - 1
             ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-geoguessr-grey/20"
+            : "hover:bg-purple-10/30"
         }`}
         aria-label="Next page"
       >

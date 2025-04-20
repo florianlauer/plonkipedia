@@ -2,6 +2,7 @@ import { Globe, Map } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Button from "../ui/Button";
 import { useLanguageContext } from "../../context/LanguageContext";
+import { Link } from "react-router-dom";
 
 const translations = {
   title: {
@@ -34,13 +35,13 @@ const Navbar = () => {
     location.pathname === "/" || location.pathname === "/content";
 
   return (
-    <header className="bg-white border-b border-geoguessr-grey sticky top-0 z-10">
-      <div className="container mx-auto flex items-center justify-between h-16 px-4">
-        <div className="flex items-center space-x-2">
-          <h1 className="text-2xl font-bold text-geoguessr-black">
+    <header className="bg-white border-b border-purple-10 sticky top-0 z-10">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <Link to="/" className="flex items-center space-x-2">
+          <span className="text-2xl text-purple-100 italic font-extrablack">
             {t.title[language]}
-          </h1>
-        </div>
+          </span>
+        </Link>
 
         <div className="flex items-center space-x-4">
           <nav className="flex space-x-2">
