@@ -2,7 +2,6 @@ import { ExternalLink, MapPin, Tag } from "lucide-react";
 import { Hint } from "../../types/database";
 import { useLanguageContext } from "../../context/LanguageContext";
 import { useTranslationQuery } from "../../hooks/useTranslationQuery";
-
 import { memo, useMemo } from "react";
 
 const translations = {
