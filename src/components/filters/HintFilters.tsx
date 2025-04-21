@@ -154,7 +154,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
   };
 
   return (
-    <div className={`bg-white rounded-lg shadow-md p-4 ${className}`}>
+    <div className={`bg-purple-10 rounded-lg shadow-md p-4 ${className}`}>
       <div className="flex flex-col space-y-4">
         {/* Search input */}
         <div className="relative">
@@ -166,7 +166,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
             placeholder={t.search[language]}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-2 w-full border border-purple-10 rounded-lg focus:ring-2 focus:ring-purple-50 focus:border-purple-50"
+            className="pl-10 pr-4 py-2 w-full border border-purple-20 rounded-lg focus:ring-2 focus:ring-purple-50 focus:border-purple-50"
           />
         </div>
 
@@ -176,7 +176,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
             variant="outline"
             size="sm"
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-2 bg-purple-80 text-purple-10 hover:bg-purple-100/70"
           >
             <Filter className="h-4 w-4" />
             <span>{t.filters[language]}</span>
@@ -185,7 +185,11 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
           {(selectedCountryId ||
             selectedTags.length > 0 ||
             selectedContinents.length > 0) && (
-            <Button variant="ghost" size="sm" onClick={handleResetFilters}>
+            <Button
+              className="bg-purple-80 text-purple-10 hover:bg-purple-100/70"
+              size="sm"
+              onClick={handleResetFilters}
+            >
               {t.reset[language]}
             </Button>
           )}
@@ -214,7 +218,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
 
         {/* Expanded filters */}
         {showFilters && (
-          <div className="space-y-4 pt-4 border-t border-purple-10/50">
+          <div className="space-y-4 pt-4 border-t border-purple-20/50">
             {/* Continent filter */}
             <div>
               <label className="block text-lg font-extrabold italic text-red-logo mb-1">
@@ -228,7 +232,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
                     className={`px-3 py-1.5 rounded-full text-sm italic font-extrabold transition-colors ${
                       selectedContinents.includes(key)
                         ? "bg-purple-50 text-white"
-                        : "bg-purple-10 text-purple-100/80 hover:bg-purple-10/70"
+                        : "bg-purple-20 text-purple-100/80 hover:bg-purple-20/70"
                     }`}
                   >
                     {/* uppercase continent name */}
@@ -250,7 +254,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
                     e.target.value ? Number(e.target.value) : undefined
                   )
                 }
-                className="w-full border border-purple-10 rounded-lg p-2 focus:ring-2 focus:ring-purple-50 focus:border-purple-50"
+                className="w-full border border-purple-20 rounded-lg p-2 focus:ring-2 focus:ring-purple-50 focus:border-purple-50"
               >
                 <option value="">{t.allCountries[language]}</option>
                 {countries.map((country) => (
@@ -266,7 +270,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
               <label className="block text-lg font-extrabold italic text-red-logo mb-1">
                 {t.tags[language]}
               </label>
-              <div className="max-h-48 overflow-y-auto p-2 border border-purple-10 rounded-lg">
+              <div className="max-h-48 overflow-y-auto p-2 border border-purple-20 rounded-lg">
                 <div className="flex flex-wrap gap-2">
                   {allTags.map((tag) => (
                     <button
@@ -275,7 +279,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
                       className={`px-2 py-1 rounded-md text-sm transition-colors ${
                         selectedTags.includes(tag)
                           ? "bg-purple-50 text-white"
-                          : "bg-purple-10 hover:bg-purple-10/70"
+                          : "bg-purple-20 hover:bg-purple-20/70"
                       }`}
                     >
                       {tag}

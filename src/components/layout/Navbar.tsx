@@ -8,7 +8,7 @@ import logo from "../../assets/logo_pin.png";
 const translations = {
   title: {
     en: "Plonkipedia",
-    fr: "Plonkipédia",
+    fr: "Plonkipedia",
   },
   map: {
     en: "Map View",
@@ -36,7 +36,7 @@ const Navbar = () => {
     location.pathname === "/" || location.pathname === "/content";
 
   return (
-    <header className="bg-white border-b border-purple-10 sticky top-0 z-10">
+    <header className="bg-purple-100 border-b-2 border-purple-20/25 sticky top-0 z-10">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
           <img src={logo} alt="Plonkipedia" className="w-7 h-7" />
@@ -48,16 +48,22 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           <nav className="flex space-x-2">
             <Button
-              variant={isContentView ? "primary" : "outline"}
+              className={`flex items-center space-x-2 ${
+                isContentView
+                  ? "bg-purple-80 text-purple-10"
+                  : "bg-purple-20 text-purple-100/80 hover:bg-purple-20/70"
+              }`}
               onClick={() => navigate("/content")}
-              className="flex items-center space-x-2"
             >
               <span>{t.content[language]}</span>
             </Button>
             <Button
-              variant={isMapView ? "primary" : "outline"}
+              className={`flex items-center space-x-2 ${
+                isMapView
+                  ? "bg-purple-80 text-purple-10"
+                  : "bg-purple-20 text-purple-100/80 hover:bg-purple-20/70"
+              }`}
               onClick={() => navigate("/map")}
-              className="flex items-center space-x-2"
             >
               <Map className="h-4 w-4" />
               <span>{t.map[language]}</span>
@@ -65,10 +71,9 @@ const Navbar = () => {
           </nav>
 
           <Button
-            variant="ghost"
             size="sm"
             onClick={toggleLanguage}
-            className="flex items-center space-x-1"
+            className="flex items-center space-x-1 bg-purple-80 text-purple-10 hover:bg-purple-100/70"
           >
             <Globe className="h-4 w-4" />
             <span>{t.toggleLanguage[language]}</span>

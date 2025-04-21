@@ -26,9 +26,7 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
 
   return (
     <div className={`flex items-center text-sm ${className}`}>
-      <span className="mr-2 text-purple-100/70">
-        {t.itemsPerPage[language]}
-      </span>
+      <span className="mr-2 text-purple-10">{t.itemsPerPage[language]}</span>
       <select
         value={pageSize}
         onChange={(e) => onPageSizeChange(Number(e.target.value))}

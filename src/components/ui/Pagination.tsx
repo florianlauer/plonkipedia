@@ -95,10 +95,10 @@ const Pagination = ({
           <button
             key={pageNumber}
             onClick={() => onPageChange(pageNumber)}
-            className={`px-3 py-1 rounded-md ${
+            className={`px-3 py-1 rounded-md  ${
               currentPage === pageNumber
                 ? "bg-purple-50 text-white"
-                : "hover:bg-purple-10/30"
+                : "hover:bg-purple-10/30 hover:text-purple-10"
             }`}
             aria-current={currentPage === pageNumber ? "page" : undefined}
           >

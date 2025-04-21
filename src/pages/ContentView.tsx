@@ -111,7 +111,7 @@ const ContentView = () => {
           <h1 className="text-4xl font-extrablack text-red-logo mb-2 italic">
             {t.title[language]}
           </h1>
-          <p className="text-purple-100/70">{t.subtitle[language]}</p>
+          <p className="text-purple-10">{t.subtitle[language]}</p>
         </div>
 
         <HintFiltersComponent
@@ -121,7 +121,7 @@ const ContentView = () => {
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="animate-pulse text-purple-100/60">
+            <div className="animate-pulse text-purple-10">
               {t.loading[language]}
             </div>
           </div>
@@ -135,16 +135,16 @@ const ContentView = () => {
           </div>
         ) : hints.length === 0 ? (
           <div className="text-center py-12 border-2 border-dashed border-purple-10 rounded-xl">
-            <p className="text-xl font-medium text-purple-100/60 mb-2">
+            <p className="text-xl font-medium text-purple-10 mb-2">
               {t.noResults[language]}
             </p>
-            <p className="text-purple-100/40">{t.tryOtherFilters[language]}</p>
+            <p className="text-purple-10">{t.tryOtherFilters[language]}</p>
           </div>
         ) : (
           <>
             {/* Résultats et contrôles de pagination */}
             <div className="flex justify-between items-center mb-4">
-              <div className="text-sm text-purple-100/60 flex items-center">
+              <div className="text-sm text-purple-10 flex items-center">
                 <Info className="h-4 w-4 mr-1" />
                 {resultsText}
               </div>
@@ -162,7 +162,7 @@ const ContentView = () => {
               currentPage={filters.page ?? 0}
               totalPages={totalPages}
               onPageChange={handlePageChange}
-              className="mt-8"
+              className="mt-8 text-purple-10"
             />
           </>
         )}
