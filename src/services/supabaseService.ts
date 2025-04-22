@@ -80,9 +80,11 @@ const findContinents = (
 // Récupérer tous les pays
 export const fetchCountries = async (): Promise<Country[]> => {
   try {
+    type CountryWithHints = Country & { hints: unknown[] };
     const { data, error } = await supabase
       .from("countries")
-      .select("*")
+      .select("*, hints(*)")
+      .not("hints", "is", null)
       .order("name");
 
     if (error) {
@@ -90,7 +92,10 @@ export const fetchCountries = async (): Promise<Country[]> => {
       throw error;
     }
 
-    return data || [];
+    // Filter out the hints data from the response
+    return ((data || []) as CountryWithHints[]).map(
+      ({ ...country }) => country
+    );
   } catch (err) {
     console.error("Error in fetchCountries:", err);
     throw err;

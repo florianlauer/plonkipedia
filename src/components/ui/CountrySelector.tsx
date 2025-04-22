@@ -1,4 +1,4 @@
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, X } from "lucide-react";
 import * as React from "react";
 import Button from "./Button";
 import {
@@ -31,6 +31,14 @@ const translations = {
     en: "Select countries...",
     fr: "Sélectionner des pays...",
   },
+  removeCountry: {
+    en: "Remove country",
+    fr: "Supprimer le pays",
+  },
+  clearAll: {
+    en: "Clear all",
+    fr: "Tout effacer",
+  },
 };
 
 interface CountrySelectorProps {
@@ -58,57 +66,102 @@ export function CountrySelector({
     }
   };
 
+  const removeCountry = (countryToRemove: Country, e: React.MouseEvent) => {
+    e.stopPropagation();
+    onSelectionChange(
+      selectedCountries.filter((c) => c.id !== countryToRemove.id)
+    );
+  };
+
+  const clearAllCountries = () => {
+    onSelectionChange([]);
+  };
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className={cn(
-            "w-full justify-between text-left font-normal bg-white border-purple-20",
-            !selectedCountries.length && "text-purple-100/60",
-            className
-          )}
-        >
-          {selectedCountries.length > 0
-            ? `${selectedCountries.length} ${translations.selectedCountries[language]}`
-            : translations.selectCountries[language]}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-full p-0 bg-white border border-purple-20">
-        <Command className="bg-white">
-          <CommandInput
-            placeholder={translations.search[language]}
-            className="h-9 border-none bg-white"
-          />
-          <CommandEmpty className="py-2 text-center text-sm text-purple-100/60">
-            {translations.noResults[language]}
-          </CommandEmpty>
-          <CommandGroup>
-            <ScrollArea className="h-64">
-              {countries.map((country) => (
-                <CommandItem
-                  key={country.id}
-                  onSelect={() => toggleCountry(country)}
-                  className="flex items-center space-x-2 px-4 py-2 hover:bg-purple-20/10 aria-selected:bg-purple-20/20"
+    <div className="flex flex-col gap-2">
+      {selectedCountries.length > 0 && (
+        <div className="flex items-center gap-2">
+          <div className="flex flex-wrap gap-2 flex-1">
+            {selectedCountries.map((country) => (
+              <div
+                key={country.id}
+                className="inline-flex items-center bg-purple-20/70 text-black px-2 py-1 rounded-md text-sm"
+              >
+                <img
+                  src={`https://flagcdn.com/${country.code.toLowerCase()}.svg`}
+                  alt={`${country.name} flag`}
+                  className="w-4 h-3 object-cover mr-2"
+                />
+                <span>{country.name}</span>
+                <button
+                  onClick={(e) => removeCountry(country, e)}
+                  className="ml-2 text-black"
+                  title={translations.removeCountry[language]}
                 >
-                  <img
-                    src={`https://flagcdn.com/${country.code.toLowerCase()}.svg`}
-                    alt={`${country.name} flag`}
-                    className="w-4 h-3 object-cover"
-                  />
-                  <span className="text-purple-100">{country.name}</span>
-                  {selectedCountries.some((c) => c.id === country.id) && (
-                    <Check className="ml-auto h-4 w-4 text-purple-50" />
-                  )}
-                </CommandItem>
-              ))}
-            </ScrollArea>
-          </CommandGroup>
-        </Command>
-      </PopoverContent>
-    </Popover>
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={clearAllCountries}
+            className="bg-purple-80 text-purple-10 hover:bg-purple-100/70 shrink-0"
+          >
+            {translations.clearAll[language]}
+          </Button>
+        </div>
+      )}
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className={cn(
+              "w-full justify-between text-left font-normal bg-white border-purple-20",
+              !selectedCountries.length && "text-purple-100/60",
+              className
+            )}
+          >
+            {translations.selectCountries[language]}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-full p-0 bg-white border border-purple-20">
+          <Command className="bg-white">
+            <CommandInput
+              placeholder={translations.search[language]}
+              className="h-9 border-none bg-white"
+            />
+            <CommandEmpty className="py-2 text-center text-sm text-purple-100/60">
+              {translations.noResults[language]}
+            </CommandEmpty>
+            <CommandGroup>
+              <ScrollArea className="h-64">
+                {countries.map((country) => (
+                  <CommandItem
+                    key={country.id}
+                    onSelect={() => toggleCountry(country)}
+                    className="flex items-center space-x-2 px-4 py-2 hover:bg-purple-20/10 aria-selected:bg-purple-20/20"
+                  >
+                    <img
+                      src={`https://flagcdn.com/${country.code.toLowerCase()}.svg`}
+                      alt={`${country.name} flag`}
+                      className="w-4 h-3 object-cover"
+                    />
+                    <span className="text-purple-100">{country.name}</span>
+                    {selectedCountries.some((c) => c.id === country.id) && (
+                      <Check className="ml-auto h-4 w-4 text-purple-50" />
+                    )}
+                  </CommandItem>
+                ))}
+              </ScrollArea>
+            </CommandGroup>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 }
