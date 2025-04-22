@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Search, Filter, X } from "lucide-react";
 import Button from "../ui/Button";
-import { useLanguageContext } from "../../context/LanguageContext";
-import { useCountriesQuery } from "../../hooks/useCountriesQuery";
-import { useTagsQuery } from "../../hooks/useTagsQuery";
+import { useLanguageContext } from "@/context/LanguageContext";
+import { useCountriesQuery } from "@/hooks/useCountriesQuery";
+import { useTagsQuery } from "@/hooks/useTagsQuery";
+import { CountrySelector } from "@/components/ui/CountrySelector";
+import type { Country } from "@/types/database";
 
 const translations = {
   search: {
@@ -87,6 +89,7 @@ type HintFiltersProps = {
   onFilterChange: (filters: {
     searchTerm?: string;
     countryId?: number;
+    countryIds?: number[];
     tags?: string[];
     continent?: string[];
   }) => void;
@@ -99,9 +102,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
   const { data: allTags = [] } = useTagsQuery();
 
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedCountryId, setSelectedCountryId] = useState<
-    number | undefined
-  >(undefined);
+  const [selectedCountries, setSelectedCountries] = useState<Country[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedContinents, setSelectedContinents] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -113,7 +114,10 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
     const debouncedFilterChange = setTimeout(() => {
       onFilterChange({
         searchTerm: searchTerm || undefined,
-        countryId: selectedCountryId,
+        countryIds:
+          selectedCountries.length > 0
+            ? selectedCountries.map((c) => c.id)
+            : undefined,
         tags: selectedTags.length > 0 ? selectedTags : undefined,
         continent:
           selectedContinents.length > 0 ? selectedContinents : undefined,
@@ -123,7 +127,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
     return () => clearTimeout(debouncedFilterChange);
   }, [
     searchTerm,
-    selectedCountryId,
+    selectedCountries,
     selectedTags,
     selectedContinents,
     onFilterChange,
@@ -131,7 +135,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
 
   const handleResetFilters = () => {
     setSearchTerm("");
-    setSelectedCountryId(undefined);
+    setSelectedCountries([]);
     setSelectedTags([]);
     setSelectedContinents([]);
     setShowFilters(false);
@@ -182,7 +186,7 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
             <span>{t.filters[language]}</span>
           </Button>
 
-          {(selectedCountryId ||
+          {(selectedCountries.length > 0 ||
             selectedTags.length > 0 ||
             selectedContinents.length > 0) && (
             <Button
@@ -235,7 +239,6 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
                         : "bg-purple-20 text-purple-100/80 hover:bg-purple-20/70"
                     }`}
                   >
-                    {/* uppercase continent name */}
                     {value[language].toUpperCase()}
                   </button>
                 ))}
@@ -247,22 +250,12 @@ const HintFilters = ({ onFilterChange, className = "" }: HintFiltersProps) => {
               <label className="block text-lg font-extrabold italic text-red-logo mb-1">
                 {t.country[language]}
               </label>
-              <select
-                value={selectedCountryId || ""}
-                onChange={(e) =>
-                  setSelectedCountryId(
-                    e.target.value ? Number(e.target.value) : undefined
-                  )
-                }
-                className="w-full border border-purple-20 rounded-lg p-2 focus:ring-2 focus:ring-purple-50 focus:border-purple-50"
-              >
-                <option value="">{t.allCountries[language]}</option>
-                {countries.map((country) => (
-                  <option key={country.id} value={country.id}>
-                    {country.name}
-                  </option>
-                ))}
-              </select>
+              <CountrySelector
+                countries={countries}
+                selectedCountries={selectedCountries}
+                onSelectionChange={setSelectedCountries}
+                className="border-purple-20 focus:ring-2 focus:ring-purple-50 focus:border-purple-50"
+              />
             </div>
 
             {/* Tag filters */}

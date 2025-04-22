@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchHints } from "../services/supabaseService";
 
-type Filters = {
+export type HintFilters = {
   countryId?: number;
+  countryIds?: number[];
   tags?: string[];
   searchTerm?: string;
   page?: number;
@@ -10,13 +11,12 @@ type Filters = {
   continent?: string[];
 };
 
-export type { Filters as HintFilters };
-
-export const useHintsQuery = (filters: Filters) => {
+export const useHintsQuery = (filters: HintFilters) => {
   const {
     page = 0,
     pageSize = 12,
     countryId,
+    countryIds,
     tags,
     searchTerm,
     continent,
@@ -25,10 +25,18 @@ export const useHintsQuery = (filters: Filters) => {
   return useQuery({
     queryKey: [
       "hints",
-      { page, pageSize, countryId, tags, searchTerm, continent },
+      { page, pageSize, countryId, countryIds, tags, searchTerm, continent },
     ],
     queryFn: () =>
-      fetchHints({ page, pageSize, countryId, tags, searchTerm, continent }),
+      fetchHints({
+        page,
+        pageSize,
+        countryId,
+        countryIds,
+        tags,
+        searchTerm,
+        continent,
+      }),
     placeholderData: (previousData) => previousData, // Keep previous data while fetching new data
   });
 };

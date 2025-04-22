@@ -100,6 +100,7 @@ export const fetchCountries = async (): Promise<Country[]> => {
 // Récupérer les astuces avec filtres et pagination
 export const fetchHints = async (options: {
   countryId?: number;
+  countryIds?: number[];
   tags?: string[];
   searchTerm?: string;
   page?: number;
@@ -195,8 +196,14 @@ export const fetchHints = async (options: {
       }
     }
 
-    // Appliquer les autres filtres
-    if (options.countryId) {
+    // Appliquer les filtres de pays
+    if (options.countryIds && options.countryIds.length > 0) {
+      console.log(
+        `[${requestId}] Filtering by country_ids:`,
+        options.countryIds
+      );
+      query = query.in("country_id", options.countryIds);
+    } else if (options.countryId) {
       console.log(`[${requestId}] Filtering by country_id:`, options.countryId);
       query = query.eq("country_id", options.countryId);
     }

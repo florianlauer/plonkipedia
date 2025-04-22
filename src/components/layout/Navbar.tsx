@@ -40,7 +40,10 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
           <img src={logo} alt="Plonkipedia" className="w-7 h-7" />
-          <span className="text-2xl text-red-logo italic font-extrablack">
+          <span
+            className="text-4xl text-red-logo italic font-extrablack"
+            style={{ WebkitTextStroke: "1.5px white" }}
+          >
             {t.title[language]}
           </span>
         </Link>
