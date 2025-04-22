@@ -108,7 +108,7 @@ const ContentView = () => {
     <div className="container mx-auto py-8 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-extrablack text-red-logo mb-2 italic">
+          <h1 className="text-5xl font-extrablack text-white mb-2 italic [text-shadow:_3px_3px_0_#CC302E,_-3px_-3px_0_#CC302E,_3px_-3px_0_#CC302E,_-3px_3px_0_#CC302E]">
             {t.title[language]}
           </h1>
           <p className="text-purple-10">{t.subtitle[language]}</p>
