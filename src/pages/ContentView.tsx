@@ -1,4 +1,4 @@
-import { AlertTriangle, Info } from "lucide-react";
+import { AlertTriangle, Info, Text, TextQuote } from "lucide-react";
 import HintCard from "../components/hint/HintCard";
 import HintFiltersComponent from "../components/filters/HintFilters";
 import { useHintsQuery } from "../hooks/useHintsQuery";
@@ -8,6 +8,7 @@ import Pagination from "../components/ui/Pagination";
 import PageSizeSelector from "../components/ui/PageSizeSelector";
 import { memo, useMemo, useCallback, useState } from "react";
 import type { Hint } from "../types/database";
+import Button from "../components/ui/Button";
 
 const translations = {
   title: {
@@ -38,6 +39,16 @@ const translations = {
     en: "Showing {start}-{end} of {total} results",
     fr: "Affichage de {start}-{end} sur {total} résultats",
   },
+  viewMode: {
+    short: {
+      en: "Short View",
+      fr: "Vue Courte",
+    },
+    long: {
+      en: "Long View",
+      fr: "Vue Détaillée",
+    },
+  },
 };
 
 // Interface pour les props du composant HintGrid
@@ -46,13 +57,15 @@ interface HintGridProps {
 }
 
 // Composant memoïsé pour afficher une grille d'astuces
-const HintGrid = memo(({ hints }: HintGridProps) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {hints.map((hint: Hint) => (
-      <HintCard key={hint.id} hint={hint} />
-    ))}
-  </div>
-));
+const HintGrid = memo(
+  ({ hints, showLongText }: HintGridProps & { showLongText: boolean }) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {hints.map((hint: Hint) => (
+        <HintCard key={hint.id} hint={hint} showLongText={showLongText} />
+      ))}
+    </div>
+  )
+);
 
 HintGrid.displayName = "HintGrid";
 
@@ -62,6 +75,7 @@ const ContentView = () => {
     page: 0,
     pageSize: 12,
   });
+  const [showLongText, setShowLongText] = useState(false);
 
   const { data, isLoading, error, isError } = useHintsQuery(filters);
 
@@ -142,11 +156,28 @@ const ContentView = () => {
           </div>
         ) : (
           <>
-            {/* Résultats et contrôles de pagination */}
+            {/* Résultats et contrôles */}
             <div className="flex justify-between items-center mb-4">
-              <div className="text-sm text-purple-10 flex items-center">
-                <Info className="h-4 w-4 mr-1" />
-                {resultsText}
+              <div className="flex items-center space-x-4">
+                <div className="text-sm text-purple-10 flex items-center">
+                  <Info className="h-4 w-4 mr-1" />
+                  {resultsText}
+                </div>
+                <Button
+                  onClick={() => setShowLongText(!showLongText)}
+                  className="flex items-center space-x-2 bg-purple-20 text-purple-100/80 hover:bg-purple-20/70"
+                >
+                  {showLongText ? (
+                    <TextQuote className="h-4 w-4" />
+                  ) : (
+                    <Text className="h-4 w-4" />
+                  )}
+                  <span>
+                    {showLongText
+                      ? t.viewMode.long[language]
+                      : t.viewMode.short[language]}
+                  </span>
+                </Button>
               </div>
               <PageSizeSelector
                 pageSize={filters.pageSize ?? 12}
@@ -155,7 +186,7 @@ const ContentView = () => {
             </div>
 
             {/* Grille d'astuces memoïsée */}
-            <HintGrid hints={hints} />
+            <HintGrid hints={hints} showLongText={showLongText} />
 
             {/* Pagination en bas */}
             <Pagination

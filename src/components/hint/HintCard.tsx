@@ -1,150 +1,97 @@
-import { ExternalLink, MapPin, Tag } from "lucide-react";
-import { Hint } from "../../types/database";
-import { useLanguageContext } from "../../context/LanguageContext";
+import { memo } from "react";
 import { useTranslationQuery } from "../../hooks/useTranslationQuery";
-import { memo, useMemo } from "react";
+import type { Hint } from "../../types/database";
+import { Card, CardContent, CardHeader } from "../../components/ui/card";
+import { Skeleton } from "../../components/ui/skeleton";
+import { Badge } from "../../components/ui/badge";
+import { cn } from "../../lib/utils";
+import { Globe2 } from "lucide-react";
+import { useLanguageContext } from "../../context/LanguageContext";
 
-const translations = {
-  noTranslation: {
-    en: "No translation available",
-    fr: "Pas de traduction disponible",
-  },
-  tags: {
-    en: "Tags",
-    fr: "Tags",
-  },
-  locations: {
-    en: "Locations",
-    fr: "Lieux",
-  },
-  viewOnMap: {
-    en: "View on map",
-    fr: "Voir sur la carte",
-  },
-};
-
-type HintCardProps = {
+export interface HintCardProps {
   hint: Hint;
+  showLongText?: boolean;
   className?: string;
-};
+}
 
-// Utilisation de React.memo avec comparaison personnalisée pour éviter les rendus inutiles
 const HintCard = memo(
-  ({ hint, className = "" }: HintCardProps) => {
+  ({ hint, showLongText = false, className }: HintCardProps) => {
     const { language } = useLanguageContext();
     const { data: translation, isLoading } = useTranslationQuery(
       hint.id,
       language
     );
 
-    // Memoïser les traductions pour éviter les re-rendus inutiles
-    const t = useMemo(() => translations, []);
+    if (isLoading) {
+      return (
+        <Card className={cn("overflow-hidden", className)}>
+          <CardHeader className="p-0">
+            <Skeleton className="w-full h-48" />
+          </CardHeader>
+          <CardContent className="p-4">
+            <Skeleton className="h-6 w-3/4 mb-4" />
+            <Skeleton className="h-4 w-full mb-2" />
+            <Skeleton className="h-4 w-2/3" />
+          </CardContent>
+        </Card>
+      );
+    }
 
-    // Générer le texte de l'alt de l'image une seule fois
-    const imageAlt = useMemo(
-      () => `Hint for ${hint.country?.name || "a country"}`,
-      [hint.country?.name]
-    );
+    if (!translation) {
+      return null;
+    }
+
+    const displayText = showLongText
+      ? translation.long_text
+      : translation.short_text;
 
     return (
-      <div className={`card ${className}`}>
-        <div className="relative">
+      <Card
+        className={cn(
+          "overflow-hidden group hover:ring-2 hover:ring-purple-20 transition-all",
+          className
+        )}
+      >
+        <CardHeader className="p-0 relative">
           <img
             src={hint.image_url}
-            alt={imageAlt}
+            alt={translation.short_text}
             className="w-full h-48 object-cover"
           />
-          {hint.country && (
-            <div className="absolute bottom-2 left-2 bg-black/80 text-white px-2 py-1 rounded-lg">
-              <div className="flex items-center space-x-1">
-                <MapPin className="h-4 w-4" />
-                <span>{hint.country.name}</span>
-              </div>
-            </div>
-          )}
-          {hint.image_link && (
-            <a
-              href={hint.image_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="absolute bottom-2 right-2 bg-blue-50/80 text-white p-1.5 rounded-lg hover:bg-blue-50 transition-colors"
-              title={t.viewOnMap[language]}
-            >
-              <ExternalLink className="h-4 w-4" />
-            </a>
-          )}
-        </div>
-
-        <div className="p-4">
-          {isLoading ? (
-            <div className="h-6 w-3/4 bg-purple-10 animate-pulse rounded mb-2"></div>
-          ) : translation?.short_text ? (
-            <p className="text-lg mb-2">{translation.short_text}</p>
-          ) : (
-            <p className="text-sm text-purple-100/50 italic mb-2">
-              {t.noTranslation[language]}
-            </p>
-          )}
-
-          {!isLoading && translation?.long_text && (
-            <p className="text-sm text-purple-100/80 mb-4">
-              {translation.long_text}
-            </p>
-          )}
-
-          {hint.tags && hint.tags.length > 0 && (
-            <div className="mt-2">
-              <p className="text-xs text-purple-100/60 mb-1">
-                {t.tags[language]}:
-              </p>
-              <div className="flex flex-wrap gap-1">
-                {hint.tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center bg-purple-10 text-purple-100/80 px-2 py-0.5 rounded-full text-xs"
-                  >
-                    <Tag className="h-3 w-3 mr-1" />
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {hint.locations && hint.locations.length > 0 && (
-            <div className="mt-2">
-              <p className="text-xs text-purple-100/60 mb-1">
-                {t.locations[language]}:
-              </p>
-              <div className="flex flex-wrap gap-1">
-                {hint.locations.map((location, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center bg-purple-50/20 text-purple-100/80 px-2 py-0.5 rounded-full text-xs"
-                  >
-                    <MapPin className="h-3 w-3 mr-1" />
-                    {location}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  },
-  // Fonction de comparaison pour optimiser les rendus
-  (prevProps, nextProps) => {
-    // Re-rendre uniquement si l'ID du hint ou le pays a changé
-    return (
-      prevProps.hint.id === nextProps.hint.id &&
-      prevProps.hint.country_id === nextProps.hint.country_id &&
-      prevProps.className === nextProps.className
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute bottom-2 left-2 flex items-center text-white">
+            <Globe2 className="w-4 h-4 mr-1" />
+            <span className="font-medium">{hint.country?.name}</span>
+          </div>
+        </CardHeader>
+        <CardContent className="p-4">
+          <p className="text-purple-10 mb-4">{displayText}</p>
+          <div className="flex flex-wrap gap-2">
+            {hint.tags?.map((tag: string, index: number) => (
+              <Badge
+                key={index}
+                variant="outline"
+                className="bg-purple-20/10 text-purple-10 border-purple-20"
+              >
+                {tag}
+              </Badge>
+            ))}
+            {hint.locations?.map((location: string, index: number) => (
+              <Badge
+                key={`loc-${index}`}
+                variant="outline"
+                className="bg-purple-20/10 text-purple-10 border-purple-20"
+              >
+                {location}
+              </Badge>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 );
 
-// Afficher un nom pour le composant dans les outils de développement
 HintCard.displayName = "HintCard";
 
 export default HintCard;
