@@ -1,4 +1,4 @@
-import { AlertTriangle, Info, Text, TextQuote } from "lucide-react";
+import { AlertTriangle, Info } from "lucide-react";
 import HintCard from "../components/hint/HintCard";
 import HintFiltersComponent from "../components/filters/HintFilters";
 import { useHintsQuery } from "../hooks/useHintsQuery";
@@ -8,7 +8,8 @@ import Pagination from "../components/ui/Pagination";
 import PageSizeSelector from "../components/ui/PageSizeSelector";
 import { memo, useMemo, useCallback, useState } from "react";
 import type { Hint } from "../types/database";
-import Button from "../components/ui/Button";
+import { Switch } from "../components/ui/switch";
+import { Label } from "../components/ui/label";
 
 const translations = {
   title: {
@@ -59,7 +60,7 @@ interface HintGridProps {
 // Composant memoïsé pour afficher une grille d'astuces
 const HintGrid = memo(
   ({ hints, showLongText }: HintGridProps & { showLongText: boolean }) => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {hints.map((hint: Hint) => (
         <HintCard key={hint.id} hint={hint} showLongText={showLongText} />
       ))}
@@ -157,32 +158,32 @@ const ContentView = () => {
         ) : (
           <>
             {/* Résultats et contrôles */}
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center space-x-4">
-                <div className="text-sm text-purple-10 flex items-center">
-                  <Info className="h-4 w-4 mr-1" />
-                  {resultsText}
-                </div>
-                <Button
-                  onClick={() => setShowLongText(!showLongText)}
-                  className="flex items-center space-x-2 bg-purple-20 text-purple-100/80 hover:bg-purple-20/70"
-                >
-                  {showLongText ? (
-                    <TextQuote className="h-4 w-4" />
-                  ) : (
-                    <Text className="h-4 w-4" />
-                  )}
-                  <span>
+            <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
+              <div className="flex items-center space-x-2 text-sm text-purple-10">
+                <Info className="h-4 w-4" />
+                <span>{resultsText}</span>
+              </div>
+
+              <div className="flex items-center justify-end space-x-8">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="view-mode"
+                    checked={showLongText}
+                    onCheckedChange={setShowLongText}
+                    className="data-[state=checked]:bg-purple-50"
+                  />
+                  <Label htmlFor="view-mode" className="text-purple-10">
                     {showLongText
                       ? t.viewMode.long[language]
                       : t.viewMode.short[language]}
-                  </span>
-                </Button>
+                  </Label>
+                </div>
+
+                <PageSizeSelector
+                  pageSize={filters.pageSize ?? 12}
+                  onPageSizeChange={handlePageSizeChange}
+                />
               </div>
-              <PageSizeSelector
-                pageSize={filters.pageSize ?? 12}
-                onPageSizeChange={handlePageSizeChange}
-              />
             </div>
 
             {/* Grille d'astuces memoïsée */}

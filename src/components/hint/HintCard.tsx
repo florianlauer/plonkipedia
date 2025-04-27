@@ -1,11 +1,10 @@
 import { memo } from "react";
 import { useTranslationQuery } from "../../hooks/useTranslationQuery";
 import type { Hint } from "../../types/database";
-import { Card, CardContent, CardHeader } from "../../components/ui/card";
+import { Card } from "../../components/ui/card";
 import { Skeleton } from "../../components/ui/skeleton";
 import { Badge } from "../../components/ui/badge";
 import { cn } from "../../lib/utils";
-import { Globe2 } from "lucide-react";
 import { useLanguageContext } from "../../context/LanguageContext";
 
 export interface HintCardProps {
@@ -25,14 +24,16 @@ const HintCard = memo(
     if (isLoading) {
       return (
         <Card className={cn("overflow-hidden", className)}>
-          <CardHeader className="p-0">
-            <Skeleton className="w-full h-48" />
-          </CardHeader>
-          <CardContent className="p-4">
-            <Skeleton className="h-6 w-3/4 mb-4" />
-            <Skeleton className="h-4 w-full mb-2" />
-            <Skeleton className="h-4 w-2/3" />
-          </CardContent>
+          <div className="flex flex-col md:flex-row-reverse">
+            <div className="h-48 md:h-full md:w-1/3">
+              <Skeleton className="w-full h-full" />
+            </div>
+            <div className="p-4 md:w-2/3">
+              <Skeleton className="h-6 w-3/4 mb-4" />
+              <Skeleton className="h-4 w-full mb-2" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+          </div>
         </Card>
       );
     }
@@ -48,45 +49,57 @@ const HintCard = memo(
     return (
       <Card
         className={cn(
-          "overflow-hidden group hover:ring-2 hover:ring-purple-20 transition-all",
+          "overflow-hidden group hover:ring-2 hover:ring-purple-20 transition-all h-full",
           className
         )}
       >
-        <CardHeader className="p-0 relative">
-          <img
-            src={hint.image_url}
-            alt={translation.short_text}
-            className="w-full h-48 object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          <div className="absolute bottom-2 left-2 flex items-center text-white">
-            <Globe2 className="w-4 h-4 mr-1" />
-            <span className="font-medium">{hint.country?.name}</span>
+        <div className="flex flex-col md:flex-row-reverse h-full">
+          {/* Image Section */}
+          <div className="h-48 md:h-auto md:w-1/3 relative">
+            <img
+              src={hint.image_url}
+              alt={translation.short_text}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-black/60 to-transparent" />
+            <div className="absolute bottom-2 left-2 md:left-auto md:right-2 flex items-center text-white">
+              {hint.country?.code && (
+                <img
+                  src={`https://flagcdn.com/${hint.country.code.toLowerCase()}.svg`}
+                  alt={`${hint.country.name} flag`}
+                  className="w-4 h-3 object-cover mr-2"
+                />
+              )}
+              <span className="font-medium">{hint.country?.name}</span>
+            </div>
           </div>
-        </CardHeader>
-        <CardContent className="p-4">
-          <p className="text-purple-10 mb-4">{displayText}</p>
-          <div className="flex flex-wrap gap-2">
-            {hint.tags?.map((tag: string, index: number) => (
-              <Badge
-                key={index}
-                variant="outline"
-                className="bg-purple-20/10 text-purple-10 border-purple-20"
-              >
-                {tag}
-              </Badge>
-            ))}
-            {hint.locations?.map((location: string, index: number) => (
-              <Badge
-                key={`loc-${index}`}
-                variant="outline"
-                className="bg-purple-20/10 text-purple-10 border-purple-20"
-              >
-                {location}
-              </Badge>
-            ))}
+
+          {/* Content Section */}
+          <div className="flex-1 md:w-2/3 p-4 flex flex-col justify-between">
+            <div>
+              <p className="text-black mb-4 line-clamp-4">{displayText}</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {hint.tags?.map((tag: string, index: number) => (
+                <Badge
+                  key={index}
+                  className="bg-purple-10 text-purple-100 hover:bg-purple-20"
+                >
+                  {tag}
+                </Badge>
+              ))}
+              {hint.locations?.map((location: string, index: number) => (
+                <Badge
+                  key={`loc-${index}`}
+                  variant="outline"
+                  className="border-purple-20 text-purple-100"
+                >
+                  {location}
+                </Badge>
+              ))}
+            </div>
           </div>
-        </CardContent>
+        </div>
       </Card>
     );
   }
