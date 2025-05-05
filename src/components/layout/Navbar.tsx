@@ -60,7 +60,7 @@ const Navbar = () => {
         {/* Desktop and Mobile Header */}
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2 z-50">
-            <img src={logo} alt="Plonkipedia" className="w-8 h-8" />
+            <img src={logo} alt="Plonkipedia" className="w-8 h-10" />
             <span className="text-2xl md:text-3xl text-white italic font-extrablack [text-shadow:_3px_3px_0_#CC302E,_-3px_-3px_0_#CC302E,_3px_-3px_0_#CC302E,_-3px_3px_0_#CC302E]">
               {t.title[language]}
             </span>
