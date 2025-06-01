@@ -1,7 +1,7 @@
 import * as L from "leaflet";
 import * as PIXI from "pixi.js";
 import { useEffect } from "react";
-import { usePixiLayerContext } from "../../Pixi/utils/pixi-layer-context";
+import { usePixiLayerContext } from "../../pixi/utils/pixi-layer-context";
 
 const useMarkerPosition = (
   marker: PIXI.Container,

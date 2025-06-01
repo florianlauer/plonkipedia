@@ -7,9 +7,10 @@ import useMarkerZoom from "../PixiMarkers/hooks/useMarkerZoom";
 
 type DemoMarkerProps = {
   position: L.LatLng;
+  color?: number;
 };
 
-const DemoMarker = ({ position }: DemoMarkerProps) => {
+const DemoMarker = ({ position, color = 0xffff00 }: DemoMarkerProps) => {
   const { marker, redraw } = useMarker();
 
   useMarkerZoom(marker);
@@ -18,8 +19,8 @@ const DemoMarker = ({ position }: DemoMarkerProps) => {
   useEffect(() => {
     const shape = new PIXI.Graphics();
 
-    shape.beginFill(0xffff00, 0.8);
-    shape.drawCircle(0, 0, 2);
+    shape.beginFill(color, 0.8);
+    shape.drawCircle(0, 0, 3);
     shape.endFill();
 
     marker.addChild(shape);
@@ -28,7 +29,7 @@ const DemoMarker = ({ position }: DemoMarkerProps) => {
       marker.removeChild(shape);
       redraw();
     };
-  }, [marker, redraw]);
+  }, [marker, redraw, color]);
 
   return null;
 };

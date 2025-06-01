@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
 import { useEffect } from "react";
-import { usePixiLayerContext } from "../../Pixi/utils/pixi-layer-context";
+import { usePixiLayerContext } from "../../pixi/utils/pixi-layer-context";
 
 const useMarkerClickEvent = <T = unknown>(
   sprite: PIXI.Container,

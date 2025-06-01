@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
 import { useEffect, useMemo } from "react";
-import { usePixiLayerContext } from "../../Pixi/utils/pixi-layer-context";
+import { usePixiLayerContext } from "../../pixi/utils/pixi-layer-context";
 
 const useMarker = () => {
   const marker = useMemo(() => new PIXI.Container(), []);
