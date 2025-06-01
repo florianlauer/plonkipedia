@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import MapFilters from "../components/map/MapFilters";
 import { useState } from "react";
 import type { HintFilters } from "../hooks/useHintsQuery";
+import GeoJSONLayer from "@/components/map/GeoJSONLayer";
 
 interface MapTileLayerProps {
   locale?: string;
@@ -47,6 +48,12 @@ const MapView = () => {
             zoomControl={false}
           >
             <GoogleMapLayer locale={language} />
+            {/* <GeoJSONLayer url="/data.geojson" renderMode="normal" /> */}
+            <GeoJSONLayer
+              url="/Australia.geojson"
+              renderMode="pixi"
+              markerType="demo"
+            />
           </MapContainer>
         </div>
       </div>
